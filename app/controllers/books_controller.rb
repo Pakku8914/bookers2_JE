@@ -8,8 +8,13 @@ class BooksController < ApplicationController
   end
 
   def index
-    @books = Book.all
+    @tag = params[:tag_name]
     @book = Book.new
+    if @tag
+      @books = Book.tagged_with(@tag)
+    else
+      @books = Book.all
+    end
   end
 
   def create
@@ -42,7 +47,7 @@ class BooksController < ApplicationController
   private
 
   def book_params
-    params.require(:book).permit(:title, :body)
+    params.require(:book).permit(:title, :body, :tag_list)
   end
 
   def ensure_correct_user
