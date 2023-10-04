@@ -8,6 +8,20 @@
 	  <th>introduction</th>
 	  <td><%= user.introduction %></td>
   </tr>
+  <% if user == current_user %>
+    <tr>
+      <th>メールアドレス</th>
+      <th><%= user.email %></th>
+    </tr>
+    <tr>
+      <th>郵便番号</th>
+      <th><%= user.postcode %></th>
+    </tr>
+    <tr>
+      <th>住所</th>
+      <th><%= user.join_address %></th>
+    </tr>
+  <% end %>
   <tr>
     <th>follows</th>
     <td><%= link_to user.followings.count, user_followings_path(user) %></td>

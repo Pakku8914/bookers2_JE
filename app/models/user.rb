@@ -32,6 +32,12 @@ class User < ApplicationRecord
   
   has_one_attached :profile_image
 
+  include JpPrefecture
+  jp_prefecture :prefecture_code
+  geocoded_by :address_city
+  after_validation :geocode, if: :address_city_changed?
+
+
   validates :name, length: { minimum: 2, maximum: 20 }, uniqueness: true
   validates :introduction, length: { maximum: 50 }
 
@@ -56,5 +62,17 @@ class User < ApplicationRecord
       profile_image.attach(io: File.open(file_path), filename: 'default-image.jpg', content_type: 'image/jpeg')
     end
     self.profile_image.variant(resize_to_fill: [weight,height]).processed
+  end
+
+  def prefecture_name
+    JpPrefecture::Prefecture.find(code: prefecture_code).try(:name)
+  end
+
+  def prefecture_name=(prefecture_name)
+    self.prefecture_code = JpPrefecture::Prefecture.find(name: prefecture_name).code
+  end
+
+  def join_address
+    "#{self.prefecture_name}#{self.address_city}#{self.address_street}#{self.address_building}"
   end
 end
